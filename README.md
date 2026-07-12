@@ -1,2 +1,0 @@
-# OsmelAlcina
-Mi portafolio 
