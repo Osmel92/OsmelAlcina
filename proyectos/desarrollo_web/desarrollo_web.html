@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Osmel Alcina - Portafolio</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+
+<style>
+/* --- Ajustes Generales de la Caja --- */
+.caja-principal {
+    background: rgba(10, 15, 29, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px; /* Simplificado */
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    width: 80%;
+    max-width: 900px; /* Añadido para que no se estire infinito en pantallas gigantes */
+    margin: 0 auto 5px auto; /* Centra las cajas y les da separación abajo */
+    display: flex;
+    align-items: center;
+    overflow: hidden; /* ¡Clave! Corta cualquier cosa (como el zoom de la imagen) que intente salirse */
+    transition: all 0.3s ease;
+    height: 500px; /* Altura fija controlada */
+}
+
+.caja-principal:hover {
+    border-color: #2ECAEF;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+}
+
+.caja-principal:hover h3 {  
+    color: #2ECAEF;
+}
+
+/* --- Título de la Sección --- */
+
+.title {
+    align-self: center; /* Se centra a sí mismo si el padre es un Flexbox */
+    width: 100%;
+    text-align: center;
+    font-size: 3.5rem; 
+    font-weight: 400;
+    color: #ffffff; 
+    margin-top: 80px;
+    letter-spacing: -1px;
+}
+
+
+.title .bold-text {
+    font-weight: 700;
+    color: #2ECAEF; 
+}
+
+/* --- Contenedor de la Imagen --- */
+.imagen {
+    flex-shrink: 0;
+    width: 50%;
+    height: 500px; /* Altura fija controlada */
+    overflow: hidden; /* Asegura que el efecto scale() no se desborde de su propia celda */
+}
+
+.imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* ¡Clave! Hace que la imagen llene el espacio sin deformarse ni salirse */
+    display: block;
+    object-position: center top;
+}
+
+/* --- Contenedor de Texto --- */
+.texto {
+    padding: 40px;
+    text-align: left; /* Cambiado a la izquierda para mejor lectura de textos largos */
+    width: 50%;
+}
+
+/* --- Efecto de Zoom --- */
+.inner-img img {
+    transition: transform 0.4s ease;
+}
+
+.inner-img:hover img {
+    transform: scale(1.08); /* El zoom ahora se le aplica directamente al tag img */
+}
+
+/* --- Media Query para Móviles (Pantallas menores de 1000px) --- */
+@media screen and (max-width: 1000px) {
+    .caja-principal {
+        flex-direction: column; /* Cambiado de table-row a column (Flexbox limpio) */
+        width: 95%; /* Aprovecha más espacio en pantallas pequeñas */
+    }
+
+    .imagen {
+        width: 100%;
+        height: 250px; /* Reducimos la altura en móvil para que no ocupe toda la pantalla */
+    }
+
+    .texto {
+        width: 100%;
+        padding: 25px;
+        text-align: center; /* En móviles se ve mejor centrado */
+    }
+    
+    .title {
+        font-size: 2.5rem; /* Título más pequeño en móviles */
+    }
+}
+
+
+/* Fondo oscuro del Modal */
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 1000; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  background-color: rgba(0, 0, 0, 0.9);
+  cursor: pointer;
+}
+
+/* Imagen dentro del modal */
+.modal-contenido {
+  margin: auto;
+  margin-top: 100px;
+  display: block;
+  max-width: 90%;
+  max-height: 90%;
+  animation: zoom 0.4s;
+}
+
+/* Animación al abrir */
+@keyframes zoom {
+  from {transform: scale(0)} 
+  to {transform: scale(1)}
+}
+
+/* Botón de cerrar */
+.cerrar {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 50px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Controles de Zoom posicionados arriba al centro */
+.controles-zoom {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1010;
+  display: flex;
+  gap: 10px;
+}
+
+.controles-zoom button {
+  background: rgba(240, 110, 4, 0.2);
+  color: white;
+  border: 1px solid white;
+  padding: 8px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.controles-zoom button:hover {
+  background: white;
+  color: black;
+}
+
+/* Contenedor que maneja el scroll si la imagen se hace muy grande */
+.contenedor-img {
+  
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Cambiado de center a flex-start para acompañar el zoom superior */
+  overflow: auto;
+
+
+}
+
+/* Imagen con transición suave para el zoom */
+.modal-contenido {
+  max-width: 80%;
+  max-height: 80%;
+  margin-top: 80px; /* Espacio opcional para que no tape los botones de zoom */
+  transition: transform 0.2s ease-out;
+  transform-origin: top center; /* El zoom se hace desde el centro */
+
+}
+
+/* --- Flechas de Navegación del Modal --- */
+.flecha-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(10, 15, 29, 0.7);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 30px;
+  padding: 15px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  z-index: 1015;
+  transition: 0.3s;
+}
+
+.flecha-nav:hover {
+  background: #2ECAEF;
+  color: #0a0f1d;
+  border-color: #2ECAEF;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
+}
+
+.flecha-izq {
+  left: 5%;
+}
+
+.flecha-der {
+  right: 5%;
+}
+
+/* Ocultar flechas en pantallas muy pequeñas si estorban la vista */
+@media screen and (max-width: 600px) {
+  .flecha-nav {
+    padding: 10px 15px;
+    font-size: 20px;
+  }
+  .flecha-izq { left: 2%; }
+  .flecha-der { right: 2%; }
+}
+
+/* Oculta las flechas automáticamente cuando el modal tenga la clase 'sin-flechas' */
+#modalZoom.sin-flechas .flecha-nav {
+  display: none;
+}
+
+
+</style>
+
+
+<script>
+
+let imagenesGaleria = []; // Guardará el grupo de imágenes actual
+let indiceActual = 0;     // Sabrá en qué posición estamos
+let escalaActual = 1;     // Escala inicial (1 = 100%)
+
+function abrirModalGaleria(arrayImagenes, indiceInicial) {
+  restablecerZoom(); 
+  
+  const modal = document.getElementById("modalZoom");
+  modal.style.display = "block";
+  
+  // Guardamos las imágenes y la posición actual
+  imagenesGaleria = arrayImagenes;
+  indiceActual = indiceInicial;
+  
+  // ⬇️ NUEVO: Si solo hay 1 imagen, añadimos la clase 'sin-flechas', si hay más la quitamos
+  if (imagenesGaleria.length <= 1) {
+    modal.classList.add("sin-flechas");
+  } else {
+    modal.classList.remove("sin-flechas");
+  }
+  
+  mostrarImagen();
+}
+
+function mostrarImagen() {
+  const img = document.getElementById("imgAmpliada");
+  img.src = imagenesGaleria[indiceActual];
+  restablecerZoom(); // Resetea el zoom cada vez que cambias de imagen
+}
+
+function cambiarImagen(direccion) {
+  // Calculamos el siguiente índice de forma cíclica
+  indiceActual += direccion;
+  
+  if (indiceActual < 0) {
+    indiceActual = imagenesGaleria.length - 1; // Si va antes de la primera, va a la última
+  } else if (indiceActual >= imagenesGaleria.length) {
+    indiceActual = 0; // Si pasa la última, vuelve a la primera
+  }
+  
+  mostrarImagen();
+}
+
+function cerrarModal() {
+  document.getElementById("modalZoom").style.display = "none";
+}
+
+function cambiarZoom(factor) {
+  escalaActual += factor;
+  if (escalaActual < 1) escalaActual = 1; 
+  if (escalaActual > 7) escalaActual = 7; 
+  aplicarTransformacion();
+}
+
+function restablecerZoom() {
+  escalaActual = 1;
+  aplicarTransformacion();
+}
+
+function aplicarTransformacion() {
+  const img = document.getElementById("imgAmpliada");
+  img.style.transform = `scale(${escalaActual})`;
+}
+
+</script>
+
+
+
+
+<body>
+
+    <header class="header">
+        <div class="logo">
+            <span>O</span>A
+        </div>
+    
+        
+    <div class="menu-container">
+    <input type="checkbox" id="menu-toggle" class="menu-checkbox">
+    
+    <label for="menu-toggle" class="hamburger-button">
+        <span></span>
+        <span></span>
+        <span></span>
+    </label>
+
+    <nav class="nav">
+        <a href="../../index.html" class="nav-link">Inicio</a>
+        <a href="../../sobre_mi.html" class="nav-link">Sobre mí</a>
+        <a href="../../proyectos.html" class="nav-link active">Portafolio</a>
+    </nav>
+    </div>
+
+    </header>
+
+
+<main class="hero-container">
+
+
+
+<section id="sobre-mi" class="wrapper">
+
+        <h2 class="title">Desarrollo<span class="bold-text"> Web</span></h2>
+
+        
+<div class="caja-principal"> 
+    <div class="imagen inner-img">
+        <a href="javascript:void(0);">
+            <img src="img/Altamar Corpus Christi - Altamar.webp" alt="" onclick="abrirModalGaleria(['img/Altamar Corpus Christi - Altamar.webp'], 0)">
+        </a>
+    </div>
+  
+    <div class="texto">
+        <h3>Landing Page, restaurante Altamar Corpus Christi.</h3>
+        <p class="subtitulo_p">WordPress, Elementor, WooCommerce</p>
+        <br/>
+        <p class="cuadro_texto">
+          Landing page gastronómica basada en el CMS WordPress, 
+          ejecutando las fases de arquitectura web, diseño visual, maquetación y redacción
+          de contenidos bajo los lineamientos del cliente.
+        </p>     
+    </div>
+</div>
+
+<div class="caja-principal"> 
+    <div class="imagen inner-img">
+        <a href="javascript:void(0);">
+            <img src="img/Web_Servicios/pagina_1.webp" alt="" onclick="abrirModalGaleria(['img/web_servicios/pagina_1.webp', 'img/web_servicios/pagina_2.webp', 'img/web_servicios/pagina_3.webp', 'img/web_servicios/pagina_4.webp', 'img/web_servicios/pagina_5.webp', 'img/web_servicios/pagina_6.webp'], 0)">
+        </a>
+    </div>
+  
+    <div class="texto">
+        <h3>Creación de Sitios Web y Estrategia Digital para Emprendedores</h3>
+        <p class="subtitulo_p">WordPress, Elementor, WooCommerce, CEO</p>
+        <br/>
+        <p class="cuadro_texto">
+          Desarrollo de sitios web para emprendedores, utilizando WooCommerce y estrategias SEO para optimizar su 
+          posicionamiento en motores de búsqueda.
+        </p>     
+    </div>
+</div>
+
+<div class="caja-principal"> 
+    <div class="imagen inner-img">
+        <a href="javascript:void(0);">
+            <img src="img/Fesh_Face_Buda/Pagina_1.jpeg" alt="" onclick="abrirModalGaleria(['img/Fesh_Face_Buda/Pagina_1.jpeg', 'img/Fesh_Face_Buda/Pagina_2.jpeg', 'img/Fesh_Face_Buda/Pagina_3.jpeg', 'img/Fesh_Face_Buda/Pagina_4.jpeg'], 0)">
+        </a>
+    </div>
+  
+    <div class="texto">
+        <h3>Página web Spa Fesh Face Buda </h3>
+        <p class="subtitulo_p">WordPress, Elementor, CEO</p>
+        <br/>
+        <p class="cuadro_texto">
+          Actualización y maquetación web, incorporando la información e imágenes proporcionadas por el cliente, 
+          además de optimizar el SEO para agilizar su localización en los motores de búsqueda.
+        </p>     
+    </div>
+</div>
+
+
+<div class="caja-principal"> 
+    <div class="imagen inner-img">
+        <a href="javascript:void(0);">
+            <img src="img/Prisma Models.webp" alt="" onclick="abrirModalGaleria(['img/Prisma Models.webp'], 0)">
+        </a>
+    </div>
+  
+    <div class="texto">
+        <h3>Página web agencia de modelos prisma models</h3>
+        <p class="subtitulo_p">WordPress, Elementor, CEO</p>
+        <br/>
+        <p class="cuadro_texto">
+          Propuesta y maquetación web con Elementor para una agencia de modelos.
+          Se elaboró el diseño incorporando imágenes e información del cliente,
+          siguiendo estrictamente cada una de las pautas requeridas.
+        </p>     
+    </div>
+</div>
+
+
+
+
+
+<div id="modalZoom" class="modal">
+    <span class="cerrar" onclick="cerrarModal()">&times;</span>
+
+    <div class="controles-zoom">
+        <button onclick="cambiarZoom(0.2)">➕ Acercar</button>
+        <button onclick="cambiarZoom(-0.2)">➖ Alejar</button>
+        <button onclick="restablecerZoom()">🔄 Reset</button>
+    </div>
+
+    <button class="flecha-nav flecha-izq" onclick="cambiarImagen(-1)">&#10094;</button>
+    <button class="flecha-nav flecha-der" onclick="cambiarImagen(1)">&#10095;</button>
+
+    <div class="contenedor-img">
+         <img class="modal-contenido" id="imgAmpliada">
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+</section>
+
+<a href="https://wa.me/+584128976335?text=¡Hola! Me gustaría ponerme en contacto contigo para recibir más detalles. ¡Gracias!" target=”_blank” class="whatsapp-btn">
+  <i class="bi bi-whatsapp"></i>
+</a>
+
+
+</main>
+
+</body>
+</html>
